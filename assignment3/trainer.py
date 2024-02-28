@@ -4,6 +4,7 @@ import time
 import collections
 import utils
 import pathlib
+import numpy as np
 
 
 def compute_loss_and_accuracy(
@@ -20,20 +21,33 @@ def compute_loss_and_accuracy(
     Returns:
         [average_loss, accuracy]: both scalar.
     """
-    average_loss = 0
-    accuracy = 0
-    # TODO: Implement this function (Task  2a)
+    total_images = 0
+    correct_predictions = 0
+    total_loss = 0
+    total_batches = len(dataloader)
+
     with torch.no_grad():
         for (X_batch, Y_batch) in dataloader:
             # Transfer images/labels to GPU VRAM, if possible
             X_batch = utils.to_cuda(X_batch)
             Y_batch = utils.to_cuda(Y_batch)
+
             # Forward pass the images through our model
             output_probs = model(X_batch)
 
-            # Compute Loss and Accuracy
+            # Compute accuracy
+            estimate = np.argmax(output_probs,axis=1)
+            for index in range(len(Y_batch)):
+                total_images += 1
+                if Y_batch[index] == estimate[index]:
+                    correct_predictions += 1
 
-            # Predicted class is the max index over the column dimension
+            # Accumulate loss
+            total_loss += loss_criterion(output_probs, Y_batch)
+
+    average_loss = total_loss / total_batches
+    accuracy = correct_predictions / total_images 
+
     return average_loss, accuracy
 
 
@@ -142,7 +156,7 @@ class Trainer:
         Y_batch = utils.to_cuda(Y_batch)
 
         # Perform the forward pass
-        predictions = self.model(X_batch)
+        predictions = self.model.forward(X_batch)
         # Compute the cross entropy loss for the batch
         loss = self.loss_criterion(predictions, Y_batch)
         # Backpropagation

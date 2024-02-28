@@ -1,3 +1,23 @@
+### Our ignores
+data/
+assignment3/checkpoints/4914.ckpt
+assignment3/checkpoints/best.ckpt
+assignment3/checkpoints/latest_checkpoint
+assignment3/data/cifar10/cifar-10-batches-py/batches.meta
+assignment3/data/cifar10/cifar-10-batches-py/data_batch_1
+assignment3/data/cifar10/cifar-10-batches-py/data_batch_2
+assignment3/data/cifar10/cifar-10-batches-py/data_batch_3
+assignment3/data/cifar10/cifar-10-batches-py/data_batch_4
+assignment3/data/cifar10/cifar-10-batches-py/data_batch_5
+assignment3/data/cifar10/cifar-10-batches-py/readme.html
+assignment3/data/cifar10/cifar-10-batches-py/test_batch
+assignment3/data/cifar10/cifar-10-python.tar.gz
+checkpoints/4914.ckpt
+checkpoints/best.ckpt
+
+
+
+
 ### macOS ###
 # General
 .DS_Store
