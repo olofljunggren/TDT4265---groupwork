@@ -1,5 +1,6 @@
 from torchvision import transforms, datasets
 from torch.utils.data.sampler import SubsetRandomSampler
+from torchvision.transforms import v2
 import torch
 import typing
 import numpy as np
@@ -8,6 +9,9 @@ np.random.seed(0)
 
 mean = (0.5, 0.5, 0.5)
 std = (.25, .25, .25)
+
+mean_gray = (0.5, )
+std_gray = (0.5, )
 
 
 def get_data_dir():
@@ -25,20 +29,38 @@ def load_cifar10(batch_size: int, validation_fraction: float = 0.1
         transforms.ToTensor(),
         transforms.Normalize(mean, std),
     ])
+
+    transform_train_augmented = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize(mean, std),
+    ])
+
+    transform_train2 = transforms.Compose([
+        transforms.RandomHorizontalFlip(), # Randomly flips the image horizontally
+        transforms.RandomCrop(32, padding=4), # Pads the image and randomly crops it back to its original size
+        # transforms.RandomRotation(10),
+        # transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1), # Randomly changes hue, saturation, brightness, and contrast
+        transforms.ToTensor(),
+        transforms.Normalize(mean, std),
+    ])
+
     transform_test = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize(mean, std)
+        transforms.Normalize(mean, std),
     ])
     data_train = datasets.CIFAR10(get_data_dir(),
                                   train=True,
                                   download=True,
-                                  transform=transform_train)
+                                  transform=transform_train2)
 
     data_test = datasets.CIFAR10(get_data_dir(),
                                  train=False,
                                  download=True,
-                                 transform=transform_test)
+                                 transform=transform_train2)
 
+    
     indices = list(range(len(data_train)))
     split_idx = int(np.floor(validation_fraction * len(data_train)))
 

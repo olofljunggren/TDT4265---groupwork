@@ -26,8 +26,9 @@ class ExampleModel(nn.Module):
                 stride=1,
                 padding=2,
             ),
-            nn.ReLU(),
+            nn.BatchNorm2d(32),
             nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.ReLU(),
             nn.Conv2d(
                 in_channels=32, 
                 out_channels=64, 
@@ -35,8 +36,9 @@ class ExampleModel(nn.Module):
                 stride=1,
                 padding=2,
             ),
-            nn.ReLU(),
+            nn.BatchNorm2d(64),
             nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.ReLU(),
             nn.Conv2d(
                 in_channels=64,
                 out_channels=128,
@@ -44,8 +46,9 @@ class ExampleModel(nn.Module):
                 stride=1,
                 padding=2,
             ),
-            nn.ReLU(),
+            nn.BatchNorm2d(128),
             nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.ReLU(),
         )
         # The output of feature_extractor will be [batch_size, num_filters, 16, 16]
         self.num_output_features = 4 * 4 * 128  # 32 * 32 * 32 
@@ -57,6 +60,7 @@ class ExampleModel(nn.Module):
         self.classifier = nn.Sequential(
             nn.Flatten(),
             nn.Linear(self.num_output_features, 64),
+            nn.BatchNorm1d(64),
             nn.ReLU(),
             nn.Linear(64, num_classes),
         )
