@@ -36,12 +36,14 @@ def compute_loss_and_accuracy(
             output_probs = model(X_batch)
 
             # Compute accuracy
-            estimate = np.argmax(output_probs,axis=1)
-            for index in range(len(Y_batch)):
-                total_images += 1
-                if Y_batch[index] == estimate[index]:
-                    correct_predictions += 1
+            # estimates = torch.argmax(output_probs,axis=1)
+            # for index in range(len(Y_batch)):
+            #     total_images += 1 
+            #     if Y_batch[index] == estimates[index]:
+            #         correct_predictions += 1
 
+            correct_predictions += (output_probs.argmax(axis=1).squeeze() == Y_batch.squeeze()).sum().item()
+            total_images += output_probs.argmax(axis=1).shape[0]
             # Accumulate loss
             total_loss += loss_criterion(output_probs, Y_batch)
 
