@@ -44,6 +44,7 @@ def compute_loss_and_accuracy(
 
             correct_predictions += (output_probs.argmax(axis=1).squeeze() == Y_batch.squeeze()).sum().item()
             total_images += output_probs.argmax(axis=1).shape[0]
+
             # Accumulate loss
             total_loss += loss_criterion(output_probs, Y_batch)
 
@@ -78,8 +79,8 @@ class Trainer:
         self.model = utils.to_cuda(self.model)
         print(self.model)
 
-        # Define our optimizer. SGD = Stochastich Gradient Descent
-        self.optimizer = torch.optim.SGD(self.model.parameters(),
+        # Define our optimizer. (SGD = Stochastich Gradient Descent), Using Adam, Preferred learning_rate=0.001
+        self.optimizer = torch.optim.Adam(self.model.parameters(),
                                          self.learning_rate, weight_decay=0.0005)
 
         # Load our dataset
