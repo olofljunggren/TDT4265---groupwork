@@ -58,7 +58,7 @@ def load_cifar10(batch_size: int, validation_fraction: float = 0.1
     data_test = datasets.CIFAR10(get_data_dir(),
                                  train=False,
                                  download=True,
-                                 transform=transform_train2)
+                                 transform=transform_test)
 
     
     indices = list(range(len(data_train)))

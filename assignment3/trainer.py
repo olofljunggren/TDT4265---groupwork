@@ -77,8 +77,8 @@ class Trainer:
         print(self.model)
 
         # Define our optimizer. SGD = Stochastich Gradient Descent
-        self.optimizer = torch.optim.Adam(self.model.parameters(),
-                                         self.learning_rate, weight_decay=0.0001)
+        self.optimizer = torch.optim.SGD(self.model.parameters(),
+                                         self.learning_rate, weight_decay=0.0005)
 
         # Load our dataset
         self.dataloader_train, self.dataloader_val, self.dataloader_test = dataloaders
@@ -119,6 +119,7 @@ class Trainer:
             f"Validation Loss: {validation_loss:.2f}",
             f"Validation Accuracy: {validation_acc:.3f}",
             sep=", ")
+        
         self.model.train()
 
     def should_early_stop(self):
