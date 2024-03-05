@@ -78,7 +78,7 @@ class Trainer:
 
         # Define our optimizer. SGD = Stochastich Gradient Descent
         self.optimizer = torch.optim.Adam(self.model.parameters(),
-                                         self.learning_rate)
+                                         self.learning_rate, weight_decay=0.0001)
 
         # Load our dataset
         self.dataloader_train, self.dataloader_val, self.dataloader_test = dataloaders

@@ -39,7 +39,7 @@ def load_cifar10(batch_size: int, validation_fraction: float = 0.1
 
     transform_train2 = transforms.Compose([
         transforms.RandomHorizontalFlip(), # Randomly flips the image horizontally
-        transforms.RandomCrop(32, padding=4), # Pads the image and randomly crops it back to its original size
+        # transforms.RandomCrop(32, padding=4), # Pads the image and randomly crops it back to its original size
         # transforms.RandomRotation(10),
         # transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1), # Randomly changes hue, saturation, brightness, and contrast
         transforms.ToTensor(),

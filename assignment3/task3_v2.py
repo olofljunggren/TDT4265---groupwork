@@ -18,55 +18,42 @@ class ImageClassifier(nn.Module):
         self.num_classes = num_classes
         # Define the convolutional layers
         self.feature_extractor = nn.Sequential(
-            nn.Conv2d(
-                in_channels=image_channels, #3
-                out_channels=32,
-                kernel_size=3,
-                stride=1,
-                padding=1,
-            ),
-            nn.BatchNorm2d(32),
+            nn.Conv2d(3, 32, kernel_size=5, stride=1, padding=2),
             nn.ReLU(),
-            nn.Conv2d(
-                in_channels=32, 
-                out_channels=64, 
-                kernel_size=3,
-                stride=1,
-                padding=1,
-            ),
+            nn.Conv2d(32, 64, kernel_size=5, stride=1, padding=2),
+            nn.MaxPool2d(2, 2), # output: 64 x 16 x 16
             nn.BatchNorm2d(64),
-            nn.MaxPool2d(kernel_size=2, stride=2), # 16*16 output
             nn.ReLU(),
-            nn.Conv2d(
-                in_channels=64,
-                out_channels=64,
-                kernel_size=3,
-                stride=1,
-                padding=1,
-            ),
-            nn.BatchNorm2d(64),
-            nn.MaxPool2d(kernel_size=2, stride=2), # 8*8 output
+
+            nn.Conv2d(64, 128, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.Conv2d(128, 128, kernel_size=5, stride=1, padding=2),
+            nn.MaxPool2d(2, 2), # output: 128 x 8 x 8
+            nn.BatchNorm2d(128),
+            nn.ReLU(),
+
+            nn.Conv2d(128, 256, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.Conv2d(256, 256, kernel_size=5, stride=1, padding=2),
+            nn.MaxPool2d(2, 2), # output: 256 x 4 x 4
+            nn.BatchNorm2d(256),
             nn.ReLU(),
         )
+
         # The output of feature_extractor will be [batch_size, num_filters, 16, 16]
-        self.num_output_features = 8 * 8 * 64  # 32 * 32 * 32 
+        self.num_output_features = 4 * 4 * 256
         # Initialize our last fully connected layer
         # Inputs all extracted features from the convolutional layers
         # Outputs num_classes predictions, 1 for each class.
         # There is no need for softmax activation function, as this is
         # included with nn.CrossEntropyLoss
         self.classifier = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(self.num_output_features, 64),
-            nn.BatchNorm1d(64),
+            nn.Flatten(), 
+            nn.Linear(256*4*4, 1024),
             nn.ReLU(),
-            nn.Linear(64, 128),
-            nn.BatchNorm1d(128),
-            # nn.ReLU(),
-            # nn.Linear(128, 128),
-            # nn.BatchNorm1d(128),
+            nn.Linear(1024, 512),
             nn.ReLU(),
-            nn.Linear(128, num_classes),
+            nn.Linear(512, 10),
         )
 
     def forward(self, x):
@@ -107,8 +94,6 @@ def create_plots(trainer: Trainer, name: str):
     plt.show()
 
 
-
-
 def main():
     # Set the random generator seed (parameters, shuffling etc).
     # You can try to change this and check if you still get the same result!
@@ -116,7 +101,7 @@ def main():
     print(f"Using device: {utils.get_device()}")
     epochs = 10
     batch_size = 64
-    learning_rate = 5e-2
+    learning_rate = 0.01 #5e-2
     early_stop_count = 4
     dataloaders = load_cifar10(batch_size)
     model = ImageClassifier(image_channels=3, num_classes=10)
