@@ -46,7 +46,7 @@ def compute_loss_and_accuracy(
             total_images += output_probs.argmax(axis=1).shape[0]
 
             # Accumulate loss
-            total_loss += loss_criterion(output_probs, Y_batch)
+            total_loss += loss_criterion(output_probs, Y_batch).item()
 
     average_loss = total_loss / total_batches
     accuracy = correct_predictions / total_images 

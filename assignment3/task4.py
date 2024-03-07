@@ -200,13 +200,13 @@ def create_plots(trainer: Trainer, name: str):
     plt.subplot(1, 2, 1)
     plt.title("Cross Entropy Loss")
     utils.plot_loss(
-        trainer.train_history["loss"], label="Training loss", npoints_to_average=10
+        trainer.TRAIN_LOSS, label="Training loss", npoints_to_average=10
     )
-    utils.plot_loss(trainer.validation_history["loss"], label="Validation loss")
+    utils.plot_loss(trainer.VALIDATION_LOSS, label="Validation loss")
     plt.legend()
     plt.subplot(1, 2, 2)
     plt.title("Accuracy")
-    utils.plot_loss(trainer.validation_history["accuracy"], label="Validation Accuracy")
+    utils.plot_loss(trainer.VALIDATION_ACC, label="Validation Accuracy")
     plt.legend()
     plt.savefig(plot_path.joinpath(f"{name}_plot.png"))
     plt.show()
