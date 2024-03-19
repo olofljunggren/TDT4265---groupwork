@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data._utils.collate import default_collate
 from pathlib import Path
-from tops.config import LazyConfig
+from tops.config.lazy import LazyConfig
 from os import PathLike
 
 def batch_collate(batch):
