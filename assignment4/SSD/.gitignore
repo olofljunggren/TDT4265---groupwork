@@ -16,8 +16,9 @@ __pycache__
 
 # datasets
 data/coco/
-data/mnist_object_detection
-data/original_mnist
+
+# data/mnist_object_detection
+# data/original_mnist
 outputs/
 data/VOCdevkit
 notebooks/data
