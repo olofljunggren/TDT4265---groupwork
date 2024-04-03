@@ -50,9 +50,9 @@ model = L(SSD300)(
     num_classes=10 + 1  # Add 1 for background
 )
 
-optimizer = L(torch.optim.SGD)(
+optimizer = L(torch.optim.AdamW)(
     # Tip: Scale the learning rate by batch size! 2.6e-3 is set for a batch size of 32. use 2*2.6e-3 if you use 64
-    lr=5e-3, momentum=0.9, weight_decay=0.0005
+    lr=5e-3, weight_decay=0.0005
 )
 schedulers = dict(
     linear=L(LinearLR)(start_factor=0.1, end_factor=1, total_iters=500),
@@ -62,7 +62,7 @@ schedulers = dict(
 
 data_train = dict(
     dataset=L(MNISTDetectionDataset)(
-        data_dir=get_dataset_dir("mnist_object_detection/train"),
+        data_dir=get_dataset_dir(""),
         is_train=True,
         transform=L(torchvision.transforms.Compose)(transforms=[
             L(ToTensor)(),  # ToTensor has to be applied before conversion to anchors.
@@ -81,7 +81,7 @@ data_train = dict(
 )
 data_val = dict(
     dataset=L(MNISTDetectionDataset)(
-        data_dir=get_dataset_dir("mnist_object_detection/val"),
+        data_dir=get_dataset_dir(""),
         is_train=False,
         transform=L(torchvision.transforms.Compose)(transforms=[
             L(ToTensor)()
