@@ -4,13 +4,13 @@ import gzip
 import pickle
 import pathlib
 from urllib import request
-SAVE_PATH = pathlib.Path("data/original_lidar")
+SAVE_PATH = pathlib.Path("notebooks/data/original_lidar")
 
 filename = [
-    ["training_images", "train-images.gz"],
-    ["test_images", "val-images.gz"],
-    ["training_labels", "train-labels.gz"],
-    ["test_labels", "val-labels.gz"]
+    # ["training_images", "train-images.gz"],
+    ["val_images", "val-images.gz"],
+    # ["training_labels", "train-labels.gz"],
+    ["val_labels", "val-labels.gz"]
 ]
 
 def extract_lidar():
@@ -25,7 +25,7 @@ def extract_lidar():
         with gzip.open(path, 'rb') as f:
             data = np.frombuffer(f.read(), np.uint8, offset=16)
             print(data.shape)
-            lidar[name[0]] = data.reshape(-1,   28*28)
+            lidar[name[0]] = data.reshape((-1,  128*1024))
     # Load labels
     for name in filename[2:]:
         path = SAVE_PATH.joinpath(name[1])
@@ -38,7 +38,7 @@ def extract_lidar():
 
 def load():
     extract_lidar()
-    dataset_path = SAVE_PATH.joinpath("mnist.pkl")
+    dataset_path = SAVE_PATH.joinpath("lidar.pkl")
     with open(dataset_path, 'rb') as f:
         lidar = pickle.load(f)
     X_train, Y_train, X_test, Y_test = lidar["training_images"], lidar["training_labels"], lidar["test_images"], lidar["test_labels"]

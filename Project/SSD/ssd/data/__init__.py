@@ -1,1 +1,1 @@
-from .mnist import MNISTDetectionDataset
+from .lidar_loader import LidarDetectionDataset

@@ -3,7 +3,7 @@ import torchvision
 from torch.optim.lr_scheduler import MultiStepLR, LinearLR
 from ssd.modeling import SSD300, SSDMultiboxLoss, backbones, AnchorBoxes
 from tops.config import LazyCall as L
-from ssd.data.mnist import MNISTDetectionDataset
+from ssd.data.mnist import LidarDetectionDataset
 from ssd import utils
 from ssd.data.transforms import Normalize, ToTensor, GroundTruthBoxesToAnchors, RandomSampleCrop, RandomHorizontalFlip, Resize
 from .utils import get_dataset_dir, get_output_dir
@@ -41,8 +41,8 @@ backbone = L(backbones.Improved)(
 model.feature_extractor = backbone
 
 data_train = dict(
-    dataset=L(MNISTDetectionDataset)(
-        data_dir=get_dataset_dir("mnist_object_detection/train"),
+    dataset=L()(
+        data_dir=get_dataset_dir("lidar_object_detection/train"),
         is_train=True,
         transform=L(torchvision.transforms.Compose)(transforms=[
             L(ToTensor)(),  # ToTensor has to be applied before conversion to anchors.

@@ -2,12 +2,12 @@ import torch
 import pathlib
 import numpy as np
 from ssd import utils
-from .mnist_object_detection.mnist_object_detection import load_dataset
+from .lidar_object_detection.lidar_object_detection import load_dataset
 from pycocotools.coco import COCO
 
 
-class MNISTDetectionDataset(torch.utils.data.Dataset):
-
+class LidarDetectionDataset(torch.utils.data.Dataset):
+    # TODO number of classes
     class_names = ["__background__"] + [str(x) for x in range(10)]
 
     def __init__(self, data_dir: str, is_train: bool, transform=None):

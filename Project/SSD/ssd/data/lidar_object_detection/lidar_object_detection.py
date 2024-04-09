@@ -12,8 +12,12 @@ def read_labels(label_path: pathlib.Path) -> typing.Tuple[np.ndarray]:
     BBOXES_XYXY = []
     with open(label_path, "r") as fp:
         for line in list(fp.readlines())[1:]:
-            label, xmin, ymin, xmax, ymax = [int(_) for _ in line.split(",")]
+            label, x_center, y_center, x_width, y_height = [int(_) for _ in line.split(" ")]
             labels.append(label)
+            xmin = x_center-int(x_width/2)
+            ymin = y_center-int(y_height/2)
+            xmax = x_center+int(x_width/2)
+            ymax = y_center+int(y_height/2)
             BBOXES_XYXY.append([xmin, ymin, xmax, ymax])
     boxes = np.array(BBOXES_XYXY)
     if len(boxes) == 0:
@@ -61,6 +65,7 @@ def tight_bbox(digit, orig_bbox):
             break
         shift += 1
     xmin += shift
+    
     # xmax
     shift = 0
     for i in range(-1, -digit.shape[1], -1):
@@ -68,13 +73,16 @@ def tight_bbox(digit, orig_bbox):
             break
         shift += 1
     xmax -= shift
-    ymin
+
+    # ymin
     shift = 0
     for i in range(digit.shape[0]):
         if digit[i, :].sum() != 0:
             break
         shift += 1
     ymin += shift
+
+    # ymax
     shift = 0
     for i in range(-1, -digit.shape[0], -1):
         if digit[i, :].sum() != 0:
@@ -87,7 +95,7 @@ def tight_bbox(digit, orig_bbox):
 def dataset_exists(dirpath: pathlib.Path, num_images):
     if not dirpath.is_dir():
         return False
-    error_msg = f"MNIST dataset already generated in {dirpath}, \n\tbut did not find filepath:"
+    error_msg = f"LIDAR dataset already generated in {dirpath}, \n\tbut did not find filepath:"
     error_msg2 = f"You can delete the directory by running: rm -r {dirpath.parent}"
     assert dirpath.joinpath("images", "images.npy").is_file(),\
         f"{error_msg}, {error_msg2}"
@@ -98,6 +106,7 @@ def dataset_exists(dirpath: pathlib.Path, num_images):
     return True
 
 
+# TODO choose min and max size
 def load_dataset(dirpath: pathlib.Path,
                  is_train: bool,
                  max_digit_size: int = 100,
@@ -137,12 +146,12 @@ def generate_dataset(dirpath: pathlib.Path,
                      min_digit_size: int,
                      imsize: int,
                      max_digits_per_image: int,
-                     mnist_images: np.ndarray,
-                     mnist_labels: np.ndarray):
+                     lidar_images: np.ndarray,
+                     lidar_labels: np.ndarray):
     if dataset_exists(dirpath, num_images):
         return
     max_image_value = 255
-    assert mnist_images.dtype == np.uint8
+    assert lidar_images.dtype == np.uint8
     image_dir = dirpath.joinpath("images")
     label_dir = dirpath.joinpath("labels")
     image_dir.mkdir(exist_ok=True, parents=True)
@@ -161,10 +170,10 @@ def generate_dataset(dirpath: pathlib.Path,
                 ious = compute_iou_all([x0, y0, x0+width, y0+width], bboxes)
                 if max(ious) < 0.25:
                     break
-            digit_idx = np.random.randint(0, len(mnist_images))
-            digit = mnist_images[digit_idx].astype(np.float32)
+            digit_idx = np.random.randint(0, len(lidar_images))
+            digit = lidar_images[digit_idx].astype(np.float32)
             digit = cv2.resize(digit, (width, width))
-            label = mnist_labels[digit_idx]
+            label = lidar_labels[digit_idx]
             labels.append(label)
             assert im[y0:y0+width, x0:x0+width].shape == digit.shape, \
                 f"imshape: {im[y0:y0+width, x0:x0+width].shape}, digit shape: {digit.shape}"

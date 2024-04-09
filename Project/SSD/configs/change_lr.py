@@ -3,12 +3,12 @@ import torchvision
 from torch.optim.lr_scheduler import MultiStepLR, LinearLR
 from ssd.modeling import SSD300, SSDMultiboxLoss, backbones, AnchorBoxes
 from tops.config import LazyCall as L
-from ssd.data.mnist import MNISTDetectionDataset
+from SSD.ssd.data.lidar_loader import LidarDetectionDataset
 from ssd import utils
 from ssd.data.transforms import Normalize, ToTensor, GroundTruthBoxesToAnchors
 from .utils import get_dataset_dir, get_output_dir
 
-# The line belows inherits the configuration set for the SSD300 mnist config
+# The line belows inherits the configuration set for the SSD300 lidar trondheim config
 from .ssd300 import (
     train,
     optimizer,

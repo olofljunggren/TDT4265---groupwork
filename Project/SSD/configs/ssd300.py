@@ -3,7 +3,7 @@ import torchvision
 from torch.optim.lr_scheduler import MultiStepLR, LinearLR
 from ssd.modeling import SSD300, SSDMultiboxLoss, backbones, AnchorBoxes
 from tops.config import LazyCall as L
-from ssd.data.mnist import MNISTDetectionDataset
+from SSD.ssd.data.lidar_loader import LidarDetectionDataset
 from ssd import utils
 from ssd.data.transforms import Normalize, ToTensor, GroundTruthBoxesToAnchors
 from .utils import get_dataset_dir, get_output_dir
@@ -61,8 +61,8 @@ schedulers = dict(
 
 
 data_train = dict(
-    dataset=L(MNISTDetectionDataset)(
-        data_dir=get_dataset_dir(""),
+    dataset=L(LidarDetectionDataset)(
+        data_dir=get_dataset_dir(""), # Path is found in function
         is_train=True,
         transform=L(torchvision.transforms.Compose)(transforms=[
             L(ToTensor)(),  # ToTensor has to be applied before conversion to anchors.
@@ -80,8 +80,8 @@ data_train = dict(
     ])
 )
 data_val = dict(
-    dataset=L(MNISTDetectionDataset)(
-        data_dir=get_dataset_dir(""),
+    dataset=L(LidarDetectionDataset)(
+        data_dir=get_dataset_dir(""), # Path is found in function
         is_train=False,
         transform=L(torchvision.transforms.Compose)(transforms=[
             L(ToTensor)()
