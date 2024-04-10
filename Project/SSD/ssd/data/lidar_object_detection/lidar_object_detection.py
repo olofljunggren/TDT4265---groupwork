@@ -118,15 +118,17 @@ def load_dataset(dirpath: pathlib.Path,
     X, Y = X_train, Y_train
     if not is_train:
         X, Y = X_test, Y_test
-    generate_dataset(
-        dirpath,
-        num_images,
-        max_digit_size,
-        min_digit_size,
-        imsize,
-        max_digits_per_image,
-        X,
-        Y)
+    # generate_dataset(
+    #     dirpath,
+    #     num_images,
+    #     max_digit_size,
+    #     min_digit_size,
+    #     imsize,
+    #     max_digits_per_image,
+    #     X,
+    #     Y)
+    image_dir = dirpath.joinpath("images")
+    np.save(str(image_dir.joinpath("images.npy")), X)
     images = []
     all_labels = []
     all_bboxes_XYXY = []

@@ -2,7 +2,7 @@ import getpass
 import pathlib
 
 def get_dataset_dir(dataset_relpath: str):
-    server_dir = pathlib.Path("/datasets/tdt4265/ad/NAPLab-LiDAR", dataset_relpath)
+    server_dir = pathlib.Path("/datasets/tdt4265/ad/NAPLab-LiDAR", dataset_relpath) #TODO change this path?
     if server_dir.is_dir():
         print("Found dataset directory in:", server_dir)
         return str(server_dir)
