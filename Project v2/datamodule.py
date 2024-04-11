@@ -5,30 +5,18 @@ import torch
 from  split_data import collect_data
 
 
-
-
 class DataModule(pl.LightningDataModule):
-    def __init__(self, batch_size=64, num_workers=11, data_root="./data", train_split_ratio=0.8):
+    def __init__(self, train_dataset, val_dataset, test_dataset ,batch_size=64, num_workers=11, data_root="./data"):
         super().__init__()
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.data_root = data_root
-        self.train_split_ratio = train_split_ratio
 
-        # Collect data
-        collect_data()
+        self.train_data = train_dataset
+        self.val_data = val_dataset
+        self.test_data = test_dataset
 
 
-    def prepare_data(self):
-        # Download the dataset if needed (only using rank 1)
-        data_dir = "data/train/images"
-        datasets.ImageFolder(root=data_dir, transform=self.get_transforms("train"))
-
-        # TODO instead use our own data
-    
-
-       
-    
     def train_dataloader(self):
         return DataLoader(self.train_dataset, batch_size=self.batch_size, num_workers=self.num_workers, pin_memory=True, shuffle=True)
 
@@ -36,8 +24,7 @@ class DataModule(pl.LightningDataModule):
         return DataLoader(self.val_dataset, batch_size=self.batch_size, num_workers=self.num_workers, pin_memory=True, shuffle=False)
 
     def test_dataloader(self):
-        test_dataset = datasets.CocoCaptions(root=self.data_root, train=False, transform=self.get_transforms("test"))
-        return DataLoader(test_dataset, batch_size=self.batch_size, num_workers=self.num_workers,pin_memory=True, shuffle=False)
+        return DataLoader(self.test_dataset, batch_size=self.batch_size, num_workers=self.num_workers,pin_memory=True, shuffle=False)
     
     # Data augmentation
     def get_transforms(self,split):

@@ -12,6 +12,11 @@ import torchvision.ops as ops
 def GIoU_loss(self, predicted_boxes, target_boxes):
     return ops.generalized_box_iou_loss(predicted_boxes, target_boxes)
 
+    # return giou_loss = 1 - ops.box_giou(pred_boxes, target_boxes).mean()
+    # This computes the GIoU loss by subtracting the mean GIoU score from 1, 
+    # as a higher GIoU score indicates better overlap and alignment, thus the loss 
+    # should decrease as the GIoU score approaches 1.
+
 def DIoU_loss(predicted_boxes, target_boxes):
     return ops.distance_box_iou_loss(predicted_boxes, target_boxes)
 

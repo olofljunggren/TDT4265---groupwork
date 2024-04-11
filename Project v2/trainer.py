@@ -1,4 +1,4 @@
-from datamodule import CocoCaptionsDataModule
+from datamodule import DataModule
 import lightning.pytorch as pl
 from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint, LearningRateMonitor
 from lightning.pytorch.loggers import WandbLogger
@@ -11,6 +11,9 @@ import torchvision.models.detection as detection
 import munch
 import yaml
 from pathlib import Path
+from dataset import CustomDataset
+from split_data import collect_data, create_labels
+from torchvision.models.detection.rpn import AnchorGenerator
 
 
 torch.set_float32_matmul_precision('medium')
@@ -58,17 +61,43 @@ class LitModel(pl.LightningModule):
         # self.model.fc = nn.Linear(2048, self.config.num_classes)
     
 
-        self.loss_fn = IoU()
+        self.loss_fn = nn.CrossEntropyLoss()
         self.acc_fn = Accuracy(task="multiclass", num_classes=self.config.num_classes)
     
     def configure_optimizers(self):
-        optimizer = torch.optim.SGD(self.parameters(), lr=self.config.max_lr, momentum=self.config.momentum, weight_decay=self.config.weight_decay)
+        # optimizer = torch.optim.SGD(self.parameters(), lr=self.config.max_lr, momentum=self.config.momentum, weight_decay=self.config.weight_decay)
+        optimizer = torch.optim.AdamW(self.parameters(), lr=self.config.max_lr, weight_decay=self.config.weight_decay)
         lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=self.config.max_epochs)
         return [optimizer], [{"scheduler": lr_scheduler, "interval": "epoch"} ]
 
     def forward(self, x):
         y_hat = self.model(x)
         return y_hat
+    
+    # Define the model architecture
+    def get_model(num_classes):
+        # Load a pre-trained backbone network
+        backbone = resnet50(pretrained=True).features
+
+        # Define the number of input channels for the backbone
+        backbone.out_channels = 1280
+
+        # Anchor generator
+        anchor_generator = AnchorGenerator(sizes=((32, 64, 128, 256, 512),),
+                                        aspect_ratios=((0.5, 1.0, 2.0),))
+
+        # ROI Pooler
+        roi_pooler = ops.MultiScaleRoIAlign(featmap_names=['0'],
+                                                        output_size=7,
+                                                        sampling_ratio=2)
+
+        # Define the model
+        model = detection.FasterRCNN(backbone,
+                        num_classes=num_classes,
+                        rpn_anchor_generator=anchor_generator,
+                        box_roi_pool=roi_pooler)
+
+        return model
 
     def training_step(self, batch, batch_idx):
         x, y = batch
@@ -102,11 +131,31 @@ class LitModel(pl.LightningModule):
 if __name__ == "__main__":
     
     pl.seed_everything(42)
+    # Collect data
+    collect_data(config.train_split_ratio)
+    create_labels("data/train/")
+    create_labels("data/validation/")
+    create_labels("data/test/")
+
+
+    data_dir_train = "data/train/images"
+    data_dir_val = "data/validation/images"
+    data_dir_test = "data/test/images"
     
-    dm = CocoCaptionsDataModule(
+    labels_train = "data/train/labels.txt"
+    labels_val = "data/validation/labels.txt"
+    labels_test = "data/test/labels.txt"
+
+    train_dataset = CustomDataset(image_dir=data_dir_train, label_file=labels_train, transform=DataModule.get_transforms("train"))
+    val_dataset = CustomDataset(image_dir=data_dir_val, label_file=labels_val, transform=DataModule.get_transforms("val"))
+    test_dataset = CustomDataset(image_dir=data_dir_test, label_file=labels_test, transform=DataModule.get_transforms("test"))
+    
+    dm = DataModule(
+        train_dataset=train_dataset,
+        val_dataset=val_dataset,
+        test_dataset=test_dataset,
         batch_size=config.batch_size,
         num_workers=config.num_workers,
-        train_split_ratio=config.train_split_ratio,
         data_root=config.data_root
     )
     if config.checkpoint_path:

@@ -59,7 +59,7 @@ def move_files(source_img_dir, dest_img_dir, source_label_dir, dest_label_dir, f
     
 
 
-def collect_data():
+def collect_data(train_split_ratio):
     if os.path.isdir("data/train"):
         print("Folder with data already exists.")
         return
@@ -69,6 +69,9 @@ def collect_data():
     source_label_directory = '/datasets/tdt4265/ad/NAPLab-LiDAR/labels_yolo_v1.1/'  # Directory containing label files
     destination_directory = 'data/'  # Directory where split data will be saved
 
-    split_data(source_img_directory, source_label_directory, destination_directory, train_ratio=0.7, val_ratio=0.15, test_ratio=0.15, random_seed=0)
+    val_ratio = (1 - train_split_ratio)/2
+    split_data(source_img_directory, source_label_directory, destination_directory, train_ratio=train_split_ratio, val_ratio=val_ratio, test_ratio=val_ratio, random_seed=0)
 
-collect_data()
+def create_labels(label_dir):
+    label_files = os.listdir(label_dir)
+
