@@ -15,6 +15,22 @@ Project/SSD/data
 Project/SSD/pyvenv.cfg
 !Project/SSD/ssd/data/
 
+SSD/data/validation
+SSD/data/train 
+SSD/data/test 
+SSD/data/VOCdevkit
+SSD/weights
+
+YOLOv8/data/validation
+YOLOv8/data/train 
+YOLOv8/data/test 
+YOLOv8/runs
+
+
+
+
+
+
 
 ### macOS ###
 # General
