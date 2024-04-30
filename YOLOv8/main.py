@@ -8,14 +8,14 @@ from ultralytics import YOLO, settings, utils
 model = YOLO("runs/detect/train8/weights/best.pt")  # load a pretrained model (recommended for training)
 
 # Use the model
-model.train(data="config.yaml", epochs=50)  # train the model
+# model.train(data="config.yaml", epochs=50)  # train the model
 # metrics = model.val()  # evaluate model performance on the validation set
 
-res=model.predict(
-   source="data/test/images/frame_000332.PNG",
-   conf=0.60,
-   save=False
-)
+# res=model.predict(
+#   source="data/test/images/frame_000332.PNG",
+#   conf=0.60,
+#   save=False
+# )
 
 # for result in res:
     
@@ -28,6 +28,6 @@ res=model.predict(
 
 # model.metrics()
 
-metrics = model.val(data='config.yaml')
+# metrics = model.val(data='config.yaml')
 
-results = model.predict(source='data/validation/images', conf=0.60, save = False)
+results = model.predict(source='data/train/images/frame_000320.PNG', conf=0.60, save = True)
