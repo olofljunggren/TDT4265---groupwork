@@ -1,14 +1,11 @@
 from ultralytics import YOLO, settings, utils
 
-# # Update a setting
-# settings.update({'runs_dir': '/path/to/runs'})
-
 # Load a model
-# model = YOLO("yolov8s.pt")  # load a pretrained model (recommended for training)
-model = YOLO("runs/detect/train8/weights/best.pt")  # load a pretrained model (recommended for training)
+# model = YOLO("yolov8s.pt")  # load a pretrained model
+model = YOLO("runs/detect/train8/weights/best.pt")  # load best model
 
 # Use the model
-# model.train(data="config.yaml", epochs=50)  # train the model
+model.train(data="config.yaml", epochs=1, translate=0.1, scale=0.5, shear=0.0, perspective=0.0001, flipud=0.0, fliplr=0.5, mosaic=1.0, optimizer="SGD")  # train the model
 # metrics = model.val()  # evaluate model performance on the validation set
 
 # res=model.predict(
@@ -28,6 +25,7 @@ model = YOLO("runs/detect/train8/weights/best.pt")  # load a pretrained model (r
 
 # model.metrics()
 
-# metrics = model.val(data='config.yaml')
+metrics = model.val(data='config.yaml')
 
-results = model.predict(source='data/train/images/frame_000320.PNG', conf=0.60, save = True)
+# Predict
+# results = model.predict(source='data/test/images', conf=0.60, save = False)

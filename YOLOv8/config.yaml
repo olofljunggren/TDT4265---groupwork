@@ -1,40 +1,13 @@
 
 path: /home/oeljungg/Documents/Groupwork/YOLOv8 #/datasets/tdt4265/ad/NAPLab-LiDAR (total path!)
 train: data/train/images
-val: data/validation/images
+val: data/test/images
 test: data/test/images
 
 task: detect
 mode: train
 model: runs/detect/train8/weights/best.pt
 data: config.yaml
-
-lr0: 0.01
-lrf: 0.00288
-momentum: 0.73375
-weight_decay: 0.00015
-warmup_epochs: 1.22935
-warmup_momentum: 0.1525
-box: 18.27875
-cls: 1.32899
-dfl: 0.56016
-hsv_h: 0.01148
-hsv_s: 0.53554
-hsv_v: 0.13636
-degrees: 0.0
-translate: 0.12431
-scale: 0.1
-shear: 0.0
-perspective: 0.0
-flipud: 0.0
-fliplr: 0.1
-mosaic: 0.42551
-mixup: 0.0
-copy_paste: 0.0
-optimizer: AdamW
-dropout: 0.05
-patience: 100
-batch: 16
 
 
 # Classes:
@@ -47,3 +20,35 @@ names:
   5: scooter
   6: person
   7: rider
+
+
+
+# hyperparameters  
+lr0: 0.01
+lrf: 0.01
+momentum: 0.937
+weight_decay: 0.0005
+warmup_epochs: 3.0
+warmup_momentum: 0.8
+warmup_bias_lr: 0.1
+box: 7.5
+cls: 0.5
+dfl: 1.5
+pose: 12.0
+kobj: 1.0
+label_smoothing: 0.0
+nbs: 64
+hsv_h: 0.015
+hsv_s: 0.7
+hsv_v: 0.4
+degrees: 0.0
+translate: 0.1
+scale: 0.5
+shear: 0.0
+perspective: 0.0
+flipud: 0.0
+fliplr: 0.5
+bgr: 0.0
+mosaic: 1.0
+mixup: 0.0
+optimizer: "SGD"
